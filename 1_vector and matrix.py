@@ -24,7 +24,7 @@ print("v dimension:", len(v))
 print(gen_zero_vec(5))
 
 
-##########matrix calculation##########
+##########matrix calcula tion##########
 
 def gen_zero_mat(m,n):
     #zero matrix of dimension n*m
@@ -110,3 +110,89 @@ B=[[2,3]]
 C=[[1,0,1],[2,1,0]]
 print(mat_mul(A,B))
 print(mat_mul(A,C))
+
+
+
+###########determinant##########
+def det_22(A):
+    return A[0][0]*A[1][1]-A[0][1]*A[1][0]
+
+def gen_Mij(A,j):
+    ret = gen_zero_mat(len(A)-1,len(A)-1)
+    for i in range(1,len(A)):
+        for k in range(0, len(A)):
+            if k<j:
+                ret[i-1][k]=A[i][k]
+            elif k>j:
+                ret[i-1][k-1]=A[i][k]
+    return ret
+            
+def det_nn(A):
+    rowA = len(A)
+    colA = len(A[0])
+    if rowA!=colA:
+        print("error: not square matrix")
+        return None
+    if rowA==2:
+        return det_22(A)
+    else:
+        ret=0 #accumulate det value
+        for i in range(colA):
+           sign=(-1)**i
+           Asub = gen_Mij(A,i)
+           ret = ret + sign * A[0][i] * det_nn(Asub)
+        return ret
+    
+A=[[1,2,3],[0,1,4],[5,6,0]]
+print(det_nn(A))
+
+
+
+#############gussian elimination##########
+def copy_mat(A):
+    rowA=len(A)
+    colA=len(A[0])
+    Acpy=gen_zero_mat(rowA,colA)
+    for i in range(rowA):
+        for j in range(colA):
+            Acpy[i][j]=A[i][j]
+    return Acpy
+
+def swap_row(A,i,j): #switch row i and row j for pivoting
+    A[i],A[j]=A[j],A[i]
+    return A
+
+
+def gaussian_elim(A):
+    rowA=len(A)
+    colA=len(A[0])
+    Acpy=copy_mat(A)
+    
+    pr=0 #pivot row
+    pc=0 #pivot col
+    while pr<rowA and pc<colA:
+        i = pr
+        while Acpy[i][pc]==0 and i+1<rowA:
+            i+=1
+            
+        if Acpy[i][pc]==0 and i+1==rowA:#this column is all zero
+            pc+=1
+            
+        else: #this column has non-zero entry
+            swap_row(Acpy,i, pr)
+            k= Acpy[pr][pc]
+            
+            for j in range(colA):
+                Acpy[pr][j]=Acpy[pr][j]/k #make pivot=1
+            
+            for j in range(pr+1,rowA):#eliminate below pivot
+                k=Acpy[j][pc]
+                for l in range(pc,colA):
+                    Acpy[j][l]=Acpy[j][l]-k*Acpy[pr][l]
+            pr+=1
+            pc+=1
+    return Acpy
+            
+            
+A=[[0,2,1,4],[1,1,1,3],[2,1,-1,1]]
+print(gaussian_elim(A))    
