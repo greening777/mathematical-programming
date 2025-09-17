@@ -187,8 +187,8 @@ def gaussian_elim(A):
             
             for j in range(pr+1,rowA):#eliminate below pivot
                 k=Acpy[j][pc]
-                for l in range(pc,colA):
-                    Acpy[j][l]=Acpy[j][l]-k*Acpy[pr][l]
+                for m in range(pc,colA):
+                    Acpy[j][m]=Acpy[j][m]-k*Acpy[pr][m]
             pr+=1
             pc+=1
     return Acpy
