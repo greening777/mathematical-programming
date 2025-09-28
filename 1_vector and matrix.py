@@ -195,4 +195,91 @@ def gaussian_elim(A):
             
             
 A=[[0,2,1,4],[1,1,1,3],[2,1,-1,1]]
-print(gaussian_elim(A))    
+print(gaussian_elim(A))
+
+
+###########inverse matrix##########
+
+
+def gj_elim(A):
+    rowA=len(A)
+    colA=len(A[0])
+    Acpy=copy_mat(A)
+    
+    pr=0 #pivot row
+    pc=0 #pivot col
+    while pr<rowA and pc<colA:
+        i = pr
+        while Acpy[i][pc]==0 and i+1<rowA:
+            i+=1
+            
+        if Acpy[i][pc]==0 and i+1==rowA:#this column is all zero
+            pc+=1
+            
+        else: #this column has non-zero entry
+            swap_row(Acpy,i, pr)
+            k= Acpy[pr][pc]
+            
+            for j in range(colA):
+                Acpy[pr][j]=Acpy[pr][j]/k #make pivot=1
+            
+            for j in range(rowA):#eliminate all other rows
+                if j!=pr:
+                    k=Acpy[j][pc]
+                    for m in range(pc,colA):
+                        Acpy[j][m]=Acpy[j][m]-k*Acpy[pr][m]
+            pr+=1
+            pc+=1
+    return Acpy
+
+
+def ext_mat(A):  ##### [A|I]#####
+    rowA=len(A)
+    ret=gen_zero_mat(rowA,rowA*2)
+    for i in range(rowA):
+        for j in range(rowA):
+            ret[i][j]=A[i][j]
+        ret[i][i+rowA]=1
+    return ret
+
+
+def inv_mat(A):
+    rowA=len(A)
+    colA=len(A[0])
+    if rowA!=colA:
+        return None
+    Acpy=ext_mat(A) #[A|I]
+    
+    pr=0
+    pc=0
+    while pr<rowA and pc<colA:
+        i = pr
+        while Acpy[i][pc]==0 and i+1<rowA:
+            i+=1
+            
+        if Acpy[i][pc]==0 and i+1==rowA:#this column is all zero
+            pc+=1
+            
+        else: #this column has non-zero entry
+            swap_row(Acpy,i, pr)
+            k= Acpy[pr][pc]
+            
+            for j in range(colA*2):
+                Acpy[pr][j]=Acpy[pr][j]/k #make pivot=1
+            
+            for j in range(rowA):#eliminate all other rows
+                if j!=pr:
+                    k=Acpy[j][pc]
+                    for m in range(colA*2):
+                        Acpy[j][m]=Acpy[j][m]-k*Acpy[pr][m]
+            pr+=1
+            pc+=1
+    Ainv=gen_zero_mat(rowA,colA)
+    for i in range(rowA):
+        for j in range(colA):
+            Ainv[i][j]=Acpy[i][j+colA]
+    return Ainv
+
+
+A=[[1,2,3],[0,1,4],[5,6,0]]
+print(inv_mat(A))   
