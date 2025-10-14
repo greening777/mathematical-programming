@@ -361,14 +361,181 @@ def pim(A,iter, diff, max_cnt):
     return v, k
 
 
+##########eigendecomposition##########
+def inv_22(A):
+    Ainv=gen_zero_mat(2,2)
+    Ainv[0][0]=A[1][1]
+    Ainv[0][1]=-A[0][1]
+    Ainv[1][0]=-A[1][0]
+    Ainv[1][1]=A[0][0]
+    
+    det=det_22(A)
+    for i in range(2):
+        for j in range(2):
+            Ainv[i][j]=Ainv[i][j]/det
+    return Ainv
 
+def diag_22(A):
+    k1, k2, v1, v2=eigvec_22(A)
+    D = gen_zero_mat(2,2)
+    D[0][0]=k1
+    D[1][1]=k2
+    P=gen_zero_mat(2,2)
+    P[0][0]=v1[0][0]
+    P[1][0]=v1[1][0]
+    P[0][1]=v2[0][0]
+    P[1][1]=v2[1][0]
+    Pinv=inv_22(P)
+    return P,D, Pinv
 
+def mat_trans(A):   #A^T
+    rowA=len(A)
+    colA=len(A[0])
+    At=gen_zero_mat(colA,rowA)
+    for i in range(rowA):
+        for j in range(colA):
+            At[j][i]=A[i][j]
+    return At
 
+def vec_dot(u,v): #dot product
+    if len(u)!=len(v):
+        print("error")
+        return None
+    n=len(u)
+    ret=0
+    for i in range(n):
+        ret=ret+u[i]*v[i]
+    return ret
 
+# A=list(map(int, input().split()))
+# B=list(map(int, input().split()))
 
+def unit_rowvec(rv):
+    n=len(rv)
+    uv=[0]*n
+    ret=0
+    for i in range(n):
+        ret=ret+rv[i]**2
+    ret=ret**0.5
+    for i in range(n):
+        uv[i]=rv[i]/ret
+    return uv
+    
+def proj(u,v): #project v onto u
+    udv=vec_dot(u,v)
+    udu=vec_dot(u,u)
+    k=udv/udu
+    ret=[0]*len(v)
+    for i in range(len(v)):
+        ret[i]=k*u[i]
+    return ret
 
+def rowvec_sub(u,v): #u-v
+    ret=[0]*len(u)
+    for i in range(len(u)):
+        ret[i]=u[i]-v[i]
+    return ret
 
+def copy_row(u):
+    ret=[0]*len(u)
+    for i in range(len(u)):
+        ret[i]=u[i]     
+    return ret
 
+def gram_schmidt(A):
+    rowA=len(A)
+    AT=mat_trans(A)
+    
+    for i in range(1, rowA):
+        ri=copy_row(AT[i])
+        for j in range(i):
+            tmp=proj(AT[j],ri)
+            AT[i]=rowvec_sub(AT[i],tmp)
+            
+    for i in range(rowA):
+        AT[i]=unit_rowvec(AT[i])
+        
+    ret=mat_trans(AT)
+    return ret
+        
+def QR_decomp(A):
+    rowA=len(A)
+    Q=gram_schmidt(A)
+    R=gen_zero_mat(rowA,rowA)
+    AT = mat_trans(A) #A의 열벡터가 필요함
+    QT = mat_trans(Q)
+    for i in range(rowA):
+        for j in range(i+1):
+            R[j][i]=vec_dot(QT[j],AT[i])
+    return Q,R 
+
+def solve_vec(A):#Ax=0의 해 구하기
+    rowA=len(A)
+    colA=len(A[0])
+    
+    pv=[]
+    for i in range(rowA):
+        for j in range(colA):
+            if round(A[i][j])!=0:
+                pv.append(j)
+                break
+    
+    fv=[j for j in range(colA) if j not in pv]
+    v=[]
+    nsol=len(fv)
+    
+    for i in range(nsol):
+        a=[0]*colA
+        v.append(a)
+    #free variable에 1 넣기
+    for i in range(nsol):
+        v[i][fv[i]]=1
+        
+    #해 구하기
+    for rnd in range(nsol):
+        for i in range(rowA-1,-1,-1):
+            if i<len(pv):
+                pc=pv[i]
+                tmp=0
+                for j in range(pc+1,colA):
+                    tmp=tmp+A[i][j]*v[rnd][j]
+                v[rnd][pc]=-tmp
+    return v, nsol  
+    
+
+def eig_nn(A):
+    n=len(A)
+    Acpy=copy_mat(A)
+    #step1: eigenvalue
+    for i in range(100): 
+        Q,R=QR_decomp(Acpy)
+        Acpy=mat_mul(R,Q)
+    #step2: eigenvalue/vector
+    val=[]
+    vec=[]
+    mul=[]
+    
+    for i in range(n):
+        if round(Acpy[i][i]) not in val:
+            val.append(round(Acpy[i][i]))
+            mul.append(1)
+        else:
+            idx=val.index(round(Acpy[i][i]))
+            mul[idx]+=1
+    
+    #step3: eigenvector
+    for i in range(len(val)):
+        B = copy_mat(A)
+        for j in range(n): #B=A-lambda*I
+            B[j][j]=B[j][j]-val[i]
+        B=gaussian_elim(B) #Bv=0이 되는 v 구하기
+        v, nsol=solve_vec(B)
+        vec.append(v)
+    return val, mul, vec
+
+           
+    
+    
     
 #####################################test##############3#########
 v=gen_vec(3,5)
@@ -435,3 +602,53 @@ print("eigenvalue2:", k2, "eigenvector2:", x2)
 
 v,k =pim(A,100, 0.001, 10)
 print("eigenvalue:", k,  "\neigenvector:", v)
+
+    #eigendecomposition
+P,D,Pinv=diag_22(A)
+print("P:", P) 
+print("D:", D)
+print("Pinv:", Pinv)
+print("PDP^-1:", mat_mul(mat_mul(P,D),Pinv))
+
+
+import time
+#A^200
+B=copy_mat(A)
+start=time.time()
+for i in range(200):
+    B=mat_mul(B,A)
+end=time.time()
+print("general mul:", (end-start))
+
+#A^200 = PD^200P^-1
+start=time.time()
+P,D,Pinv=diag_22(A)
+D[0][0]=D[0][0]**200
+D[1][1]=D[1][1]**200
+ret=mat_mul(mat_mul(P,D),Pinv)
+end=time.time()
+print("Diag mul:", (end-start))
+
+#gram schmidt
+A=[[1,1,0],[0,1,1],[1,1,1]]
+gA=gram_schmidt(A)
+gAT=mat_trans(gA)
+print(mat_mul(gAT,gA)) #should be identity matrix
+
+#QR decomposition
+A=[[3,1,0],[2,0,1],[1,1,1]]
+Q,R=QR_decomp(A)
+ret =mat_mul(Q,R)
+print("QR:", ret)
+
+#eig nn
+B=[[2,-3,0],[2,-5,0],[0,0,3]]
+v, nsol=solve_vec(B)
+print("v:", v)
+print("nsol:", nsol)
+val, mul, vec=eig_nn(B)
+print("val:", val)
+print("mul:", mul)
+print("vec:", vec)
+
+
