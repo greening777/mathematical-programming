@@ -533,9 +533,21 @@ def eig_nn(A):
         vec.append(v)
     return val, mul, vec
 
-           
-    
-    
+
+########Lp-norm######
+def lp_norm(v,p):
+    if p==1:
+        ret=0
+        for i in v:
+            ret=ret+abs(i)
+        return ret
+    else:
+        ret=0
+        for i in v:
+            ret=ret+abs(i)**p
+        ret=ret**(1/p)
+        return ret
+               
     
 #####################################test##############3#########
 v=gen_vec(3,5)
@@ -651,4 +663,6 @@ print("val:", val)
 print("mul:", mul)
 print("vec:", vec)
 
-
+v=(3,-4)
+print("L1-norm:", lp_norm(v,1))
+print("L2-norm:", lp_norm(v,2))
