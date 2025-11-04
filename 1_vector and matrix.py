@@ -666,3 +666,48 @@ print("vec:", vec)
 v=(3,-4)
 print("L1-norm:", lp_norm(v,1))
 print("L2-norm:", lp_norm(v,2))
+
+
+
+
+
+def solve_vec(A):#Ax=0의 해 구하기
+    rowA=len(A)
+    colA=len(A[0])
+    
+    pv=[]
+    for i in range(rowA):
+        for j in range(colA):
+            if round(A[i][j])!=0:
+                pv.append(j)
+                break
+    
+    fv=[j for j in range(colA) if j not in pv]
+    vec=[]
+    nsol=len(fv)
+    
+    for i in range(nsol):
+        a=[0]*colA
+        vec.append(a)
+    #free variable에 1 넣기
+    for i in range(nsol):
+        vec[i][fv[i]]=1
+        
+    #해 구하기
+    for rnd in range(nsol):
+        for i in range(rowA-1,-1,-1):
+            if i<len(pv):
+                pc=pv[i]
+                tmp=0
+                for j in range(pc+1,colA):
+                    tmp=tmp+A[i][j]*vec[rnd][j]
+                vec[rnd][pc]=-tmp
+    v=vec[0]
+    return v, nsol  #nsol=차원
+
+A = [[1,2,-1],
+     [0,1,3]]
+
+v, nsol = solve_vec(A)
+print("해 공간 기저:", v)
+print("차원:", nsol)
