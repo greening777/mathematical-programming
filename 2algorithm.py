@@ -1,5 +1,8 @@
 
-#########selection sort###########
+#########sort algorithm###########
+
+
+###selection sort
 def selection_sort(L):
     for i in range(len(L)):
         idx=i
@@ -87,19 +90,9 @@ def quick_sort(L, start, end):
     quick_sort(L, pivot+1, end)
     return L
 
-
-
-##########test###########
-L=[4,2,6,5,1,3,0]
-
-print(selection_sort(L))
-print(bubble_sort(L))
-print(insert_sort(L))
-
-print(merge_sort(L, 0, len(L)-1))
-
-# import random
-# import time
+######time check
+import random
+import time
 # def gen_rand_list(n,a):
 #     L=[]
 #     for i in range(n):
@@ -152,3 +145,122 @@ print(merge_sort(L, 0, len(L)-1))
 # test_sort_speed(10)
 # test_sort_speed(1000)       
        
+
+
+
+
+#########Seach algorithm###########
+
+##sequential search
+def lin_search(L,n):
+    for i in range(len(L)):
+        if L[i]==n:
+            return i
+    return -1
+
+##binary search
+def bin_search(L,n):
+    start=0
+    end=len(L)-1
+    while start<=end:
+        middle=(start+end) >>1
+        if L[middle]<n:
+            start=middle+1
+        elif L[middle]>n:
+            end=middle-1
+        else:
+            return middle
+    return -1
+
+##interpolation search
+def inter_search(L,n):
+    low=0
+    high=len(L)-1
+    while n>=L[low] and n<=L[high] and low<=high:
+        x = (high-low)*(n-L[low])/(L[high]-L[low])+low
+        x=int(x)
+        
+        if L[x]==n:
+            return x
+        elif L[x]<n:
+            low=x+1
+        else:
+            high=x-1
+    return -1
+        
+
+######time cheeck
+
+# def rand_list(n):
+#     L=[]
+#     cnt=0
+#     while cnt<n:
+#         a=random.randrange(n*100)
+#         if a not in L:
+#             L.append(a)
+#             cnt=cnt+1
+#     return L
+
+# def compare_linear_bin():
+#     for i in range(10,1000,100):
+#         print("data length:", i)
+#         Ltime=0
+#         Btime=0
+#         for j in range(0,2000):
+#             L=rand_list(i)
+#             L.sort()
+#             n=random.randrange(i*100)
+#             start=time.time()
+#             lin_search(L,n)
+#             end=time.time()
+#             Ltime=Ltime+(end-start)
+            
+#             start=time.time()
+#             bin_search(L,n)
+#             end=time.time()
+#             Btime=Btime+(end-start)
+#         print(f"Linear search: {Ltime:.5f} sec")
+#         print(f"Binary search: {Btime:.5f} sec")
+
+
+# def compare_linear_bin_unsort():
+#     for i in range(10,1000,100):
+#         print("data length:", i)
+        
+#         Ltime=0
+#         Btime=0
+#         for j in range(0,2000):
+#             L=rand_list(i)
+
+#             n=random.randrange(i*100)
+#             start=time.time()
+#             lin_search(L,n)
+#             end=time.time()
+#             Ltime=Ltime+(end-start)
+            
+#             start=time.time()
+#             L.sort()
+#             bin_search(L,n)
+#             end=time.time()
+#             Btime=Btime+(end-start)
+#         print(f"Linear search: {Ltime:.5f} sec")
+#         print(f"Sort+Binary search: {Btime:.5f} sec")
+
+
+# compare_linear_bin()
+# compare_linear_bin_unsort()
+
+
+##########test###########
+L=[4,2,6,5,1,3,0]
+
+print(selection_sort(L))
+print(bubble_sort(L))
+print(insert_sort(L))
+
+print(merge_sort(L, 0, len(L)-1))
+
+
+L=[9,8,1,2,7,3,6,4,5]
+print(lin_search(L,3))
+print(lin_search(L,10))
