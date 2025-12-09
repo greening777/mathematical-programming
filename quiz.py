@@ -72,7 +72,6 @@ while start<end:
     if L[start]<1 and L[start+1]<1:
         total=total+L[start]*L[start+1]
         start=start+2
-        
     else:
         break
     
@@ -92,3 +91,56 @@ print(total)
 
 
 #############quiz 1
+n = int(input())
+L=list(map(int, input().split()))
+
+f = int(input())
+F=list(map(int, input().split()))
+    
+def lin_search(L,n):
+    for i in range(len(L)):
+        if L[i]==n:
+            return "yes"
+    return "no"
+
+for i in F:
+    print(lin_search(L,i), end=' ')
+    
+
+
+##############quiz2
+L=list(map(int, input().split()))
+
+L.sort()
+B=[]
+B.append(L[0])
+for i in range(1, len(L)):
+    
+    if L[i]!=L[i-1]:
+        B.append(L[i])
+        
+print(B)
+
+
+#########
+n, k = map(int, input().split())
+L=[]
+for i in range(n):
+    L.append(int(input()))
+
+end=max(L)
+start=1
+best=0
+
+while start<=end:
+    mid=(start+end)>>1
+    tmp=0
+    for i in L:
+        tmp=tmp+(i//mid)
+    if tmp>=k:
+        best=mid
+        start=mid+1
+    else:
+        end=mid-1
+        
+print(best)
