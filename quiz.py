@@ -150,8 +150,107 @@ print(best)
 ############quiz test
 ###quiz1
 
+n=int(input())
+L=[]
+
+def find_txt(L,txt):
+    for i in range(len(L)):
+        if L[i][0]==txt:
+            return i
+    return -1
+
+for i in range(n):
+    a=input()
+    idx=find_txt(L,a)
+    if idx==-1:
+        L.append(a,1)
+    else:
+        L[idx][1]=L[idx][1]+1
+
+L.sort(key=lambda x: x[1], reverse=True)
+
+ret=L[0][0]
+
+for i in range(1, len(L)):
+    if L[i][1]==L[0][1]:
+        if ret>L[i][0]:
+            ret=L[i][0]
+    else:
+        break
+    
+print(ret)
+
 ###quiz2
+n=int(input())
+L=[]
+
+def find_txt(L,txt):
+    for i in range(len(L)):
+        if L[i][0]==txt:
+            return i
+    return -1
+
+for i in range(n):
+    a=input()
+    idx=find_txt(L,a)
+    if idx==-1:
+        L.append(a,len(a))
+L.sort(key=lambda x: (x[1],x[0]))
+
+for i in L:
+    print(i[0])
 
 ###quiz3
+L=list(map(int,input().split()))
+
+L.sort()
+ret=[L[0]]
+for i in range(1, len(L)):
+    if L[i]!=L[i-1]:
+        ret.append(L[i])
+ret=ret[::-1]
+print(*ret)
 
 ###quiz4
+L=list(map(int,input().split()))
+n=int(input())
+
+L.sort()
+
+def bsearch_h(L,n):
+    start=0
+    end=len(L)-1
+    high = -1
+    while start<=end:
+        mid=(start+end)>>1
+        if L[mid]>n:
+            end=mid-1
+        elif L[mid]<n:
+            start=mid+1
+        else:
+            high=mid
+            start=mid+1
+    return high
+
+def bsearch_l(L,n):
+    start=0
+    end=len(L)-1
+    low = -1
+    while start<=end:
+        mid=(start+end)>>1
+        if L[mid]>n:
+            end=mid-1
+        elif L[mid]<n:
+            start=mid+1
+        else:
+            low=mid
+            end=mid-11
+    return low
+
+hidx=print(bsearch_h(L,n))
+lidx=print(bsearch_l(L,n))
+
+if hidx==-1 or lidx==-1:
+    print("None")
+else:
+    print(lidx,hidx)

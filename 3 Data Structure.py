@@ -278,15 +278,15 @@ def print_display(node, level=0):
     print_display(node.rightsibling, level)
 
 #########test##########
-root=nNode("a")
-c1=nNode("b")
-c2=nNode("c")
-c3=nNode("d")
+# root=nNode("a")
+# c1=nNode("b")
+# c2=nNode("c")
+# c3=nNode("d")
 
-add_child(root, c1)
-add_child(root, c2)
-add_child(c1,c3)
-print_display(root)
+# add_child(root, c1)
+# add_child(root, c2)
+# add_child(c1,c3)
+# print_display(root)
         
 
 class bNode:
@@ -431,37 +431,290 @@ class bstree:
             self._print_tree(node.left, level + 1)
 
 #########test########## 
-bst=bstree()
-bst.insert(4)
-bst.insert(6)
-bst.insert(2)
-bst.insert(1)
-bst.insert(3)
-bst.insert(5)
-bst.insert(7)
-print("===binary search tree===")
-bst.print_tree()
+# bst=bstree()
+# bst.insert(4)
+# bst.insert(6)
+# bst.insert(2)
+# bst.insert(1)
+# bst.insert(3)
+# bst.insert(5)
+# bst.insert(7)
+# print("===binary search tree===")
+# bst.print_tree()
 
-print("8??:" , bst.search(8))
-print("3??:" , bst.search(3))
+# print("8??:" , bst.search(8))
+# print("3??:" , bst.search(3))
 
-bst.display_inorder()
+# bst.display_inorder()
 
-ret=bst.inorder_stact()
-print("ret:", ret)
+# ret=bst.inorder_stact()
+# print("ret:", ret)
 
-bst.remove(4)
-bst.print_tree()
-
-
-B=[1,4,2,3,1,4,2,3,1,2]
-p1=bstree()
-for i in B:
-    p1.insert(i)
-p1.print_tree()
-ret=p1.inorder_stact()
-print(ret)
+# bst.remove(4)
+# bst.print_tree()
 
 
+# B=[1,4,2,3,1,4,2,3,1,2]
+# p1=bstree()
+# for i in B:
+#     p1.insert(i)
+# p1.print_tree()
+# ret=p1.inorder_stact()
+# print(ret)
 
 
+##############heap###########
+class minheap:
+    def __init__(self):
+        self.heap=[]
+    
+    def _parent(self,idx):
+        #(idx-1)//2
+        return (idx-1)//2
+    
+    def _left_child(self, idx):
+        return (idx*2)+1
+    
+    def _right_child(self, idx):
+        return (idx*2)+2
+
+    ###insert
+    def insert_heap(self,data):
+        self.heap.append(data)
+        self._heapify_up(len(self.heap)-1)
+        
+    def _heapify_up(self, idx):
+        pidx=self._parent(idx)
+        while idx>0 and self.heap[idx]<self.heap[pidx]:
+            self.heap[idx], self.heap[pidx]=self.heap[pidx],self.heap[idx]
+            idx=pidx
+            pidx=self._parent(idx)
+            
+        
+    ###delete  
+    def extract_min(self):
+        if self.heap is None:
+            return None
+        if len(self.heap)==1:
+            return self.heap.pop()
+        
+        min_val = self.heap[0]
+        self.heap[0]=self.heap.pop()
+        self._heapify_down(0)
+        return min_val
+    
+    def _heapify_down(self, idx):
+        lenh = len(self.heap)
+        while True:
+            lidx = self._left_child(idx)
+            ridx = self._right_child(idx)
+            min_idx=idx
+            if lidx<lenh and self.heap[lidx]<self.heap[min_idx]:
+                min_idx=lidx
+            if ridx<lenh and self.heap[ridx]<self.heap[min_idx]:
+                min_idx=ridx
+            if min_idx ==idx:
+                break
+            self.heap[min_idx], self.heap[idx]=self.heap[idx], self.heap[min_idx]
+            idx=min_idx
+
+
+# ######test
+# th=minheap()
+# print(th.heap)
+# th.insert_heap(5)
+# th.insert_heap(6)
+# th.insert_heap(2)
+# th.insert_heap(8)
+# th.insert_heap(12)
+# th.insert_heap(7)
+# th.insert_heap(14)
+# th.insert_heap(9)
+# print(th.heap)
+
+# print(th.extract_min())
+
+# print(th.heap)
+
+
+##########pqueue
+class pqueue:
+    def __init__(self):
+        self.heap=[]
+    def _parent(self, idx):
+        return (idx-1)>>1
+    def _left_child(self, idx):
+        return (idx<<1)+1
+    def _right_child(self, idx):
+        return (idx<<1)+2
+    
+    def insert_pq(self, priority, data):
+        self.heap.append([priority, data])
+        self._heapify_up(len(self.heap)-1)
+        
+    def _heapify_up(self,idx):
+        pidx=self._parent(idx)
+        while idx>0 and self.heap[idx][0]<self.heap[pidx][0]:
+            self.heap[idx], self.heap[pidx]=self.heap[pidx],self.heap[idx]
+            idx=pidx
+            pidx=self._parent(idx)
+            
+    def pq_pop(self):
+        if self.heap is None:
+            return None
+        if len(self.heap)==1:
+            return self.heap.pop()[1]
+        
+        min_val =self.heap[0][1]
+        self.heap[0]=self.heap.pop()
+        self._heapify_down(0)
+        return min_val
+    
+    def _heapify_down(self, idx):
+        lenh= len(self.heap)
+        while True:
+            lidx=self._left_child(idx)
+            ridx=self._right_child(idx)
+            min_idx=idx
+            if lidx<lenh and self.heap[lidx][0]<self.heap[min_idx][0]:
+                min_idx=lidx
+            if ridx<lenh and self.heap[ridx][0]<self.heap[min_idx][0]:
+                min_idx=ridx
+            if min_idx==idx:
+                break
+            
+            self.heap[idx],self.heap[min_idx] = self.heap[min_idx],self.heap[idx]
+            idx=min_idx
+
+
+######Test      
+# pq=pqueue()
+# pq.insert_pq(5,"task 1")
+# pq.insert_pq(3,"task 2")
+# pq.insert_pq(1,"task 3")
+# print(pq.heap)
+# print(pq.pq_pop())
+# print(pq.heap)
+
+
+#########hash table
+class htable:
+    def __init__(self,size=10):
+        self.size = size
+        self.table = [[] for _ in range(size)]
+        
+    def _hash(self,key):
+        return hash(key)%self.size
+    
+    def insert(self,key,value):
+        idx = self._hash(key)
+        for i in self.table[idx]:
+            if i[0]==key:
+                i[1]=value
+                return
+        self.table[idx].append([key,value])
+    def delete(self,key):
+        idx = self._hash(key)
+        for i, pair in enumerate(self.table[idx]):
+            if pair[0] == key:
+                del self.table[idx][i]
+                return True #
+            return False #
+        
+# ###test
+# test_table = htable()
+# test_table.insert("a", 100)
+# test_table.insert("b", 200)
+# test_table.insert("c", 300)
+# test_table.insert("d", 400)
+# print(test_table.table)
+# test_table.delete("b")
+# print(test_table.table)
+
+
+###linked list
+
+class Node:
+    def __init__(self,key,value):
+        self.key = key
+        self.value = value
+        self.next = None
+
+
+class htbl:
+    def __init__(self, size=10):
+        self.size = size
+        self.table = [None]*size
+
+    def _hash(self,key):
+        return hash(key)%self.size
+
+    def insert(self,key,value):
+        idx = self._hash(key)
+        nnode = Node(key,value)
+
+        if self.table[idx]==None: #
+            self.table[idx] = nnode
+            return
+
+        else: #끝에다가
+            curr = self.table[idx]
+            while curr:
+                if curr.key ==key:
+                    curr.value = value
+                    return
+                if curr.next is None:
+                    break
+                curr = curr.next
+            curr.next = nnode
+
+    def search(self,key):
+        idx = self._hash(key)
+        curr = self.table[idx]
+        while curr:
+            if curr.key ==key:
+                return curr.value
+            curr = curr.next
+        return None
+
+    def delete(self,key):
+        idx = self._hash(key)
+        curr=self.table[idx]
+        prev = None
+
+        while curr:
+            if curr.key == key:
+                if prev is None: #head
+                    self.table[idx] = curr.next
+                else:
+                    prev.next = curr.next
+                return True
+            prev =curr
+            curr = curr.next
+
+        return False
+
+    def print_table(self):
+        for i in range(0, len(self.table)):
+            print("idx:",i, end=" ")
+            curr = self.table[i]
+            while curr:
+                print("[key:",curr.key,"val:", curr.value,"]",end=" ")
+                curr=curr.next
+            print("")
+
+
+ht = htbl()
+ht.insert("apple", 100)
+ht.insert("banana", 200)
+ht.insert("grape", 300)
+ht.print_table()
+ht.insert("banana", 250) 
+ht.insert("orange", 400)
+ht.insert("melon", 100)
+ht.insert("cherry", 200)
+ht.insert("carrot", 400)
+ht.print_table()
+ht.delete("banana")
+ht.print_table()
+ht.delete("apple")
