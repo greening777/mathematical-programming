@@ -1,0 +1,127 @@
+# #n1
+# n,m,x,k=map(int,input().split())
+
+# L=[[] for _ in range(n+1)]
+# for _ in range(m):
+#     a,b=map(int, input().split())
+#     L[a].append(b)
+    
+# def min_dis_k(L,x,k):
+#     v=[0]*len(L)
+#     q=[x]
+    
+#     while q:
+#         curr=q.pop(0)
+        
+#         for n in L[curr]:
+#             if v[n]==0:
+#                 v[n]=v[curr]+1
+#                 q.append(n)
+    
+#     ret=[]
+#     for i in range(len(v)):
+#         if v[i]==k:
+#             ret.append(i)
+            
+#     if len(ret)==0:
+#         print("-1")
+#     else:
+#         print(*ret)
+        
+# min_dis_k(L,x,k)
+            
+
+# #n2
+# n,k=map(int,input().split())
+# L=[[] for _ in range(n+1)]
+
+# for _ in range(k):
+#     a,b=map(int,input().split())
+#     L[a].append(b)
+#     L[b].append(a)
+    
+# s,e = map(int,input().split())
+
+# def bfs_is_path(L,s,e):
+#     v=[0]*len(L)
+#     q=[s]
+#     v[s]=1
+#     tmp=[-1]*len(L)
+    
+#     while q:
+#         curr=q.pop(0)
+#         for i in L[curr]:
+#             if v[i]==0:
+#                 q.append(i)
+#                 v[i]=1
+#                 tmp[i]=curr
+#     if v[e]==0:
+#         print("-1")
+#     else:
+#         cn=e
+#         path=[]
+#         while cn!=-1:
+#             path.append(cn)
+#             cn=tmp[cn]
+#         path=path[::-1]
+#         print(*path)
+        
+# bfs_is_path(L,s,e)
+
+
+#n3
+import heapq
+n,m=map(int,input().split())
+L=[[] for _ in range(n+1)]
+
+for _ in range(m):
+    x,y,c=map(int,input().split())
+    L[y].append([c,x])
+    
+P=int(input())
+
+def find_min_val(L,p):
+    dis=[float('inf') for _ in range(len(L))]
+    tmp=[-1]*len(L)
+    dis[P]=0
+    
+    pq=[(0,p)]
+    last_node=[]
+    
+    while pq:
+        curr_w, node = heapq.heappop(pq)
+        
+        if curr_w>dis[node]:
+            continue
+        
+        if len(L[node])==0:
+            last_node.append(node)
+        
+        for weight, v in L[node]:
+            if weight+dis[node]<dis[v]:
+                dis[v]=weight+dis[node]
+                tmp[v]=node
+                heapq.heappush(pq,(dis[v],v))
+    
+    if len(last_node)==1 and last_node[0]==P:
+        print("0")
+        print(P)
+    
+    else:
+        mn=last_node[0]
+        mv=dis[mn]
+        
+        for i in range(1, len(last_node)):
+            if dis[last_node[i]]<mv:
+                mv=dis[last_node[i]]
+                mn=last_node[i]
+                
+        cidx=mn
+        ret=[]
+        while cidx!=-1:
+            ret.append(cidx)
+            cidx=tmp[cidx]
+            
+        print(mv)
+        print(*ret)
+find_min_val(L,P)
